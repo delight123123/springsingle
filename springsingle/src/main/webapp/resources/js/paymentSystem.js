@@ -24,7 +24,10 @@ $(function() {
 				if (rsp.success) {
 					// jQuery로 HTTP 요청
 					jQuery.ajax({
-						url: "/verifyIamport/"+rsp.imp_uid, // 가맹점 서버
+						url: "/springsingle/verifyIamport", // 가맹점 서버
+						data:{
+							imp_uid : rsp.imp_uid
+						},
 						method: "POST"
 					}).done(function(data) {
 					console.log(data);
@@ -56,13 +59,17 @@ $(function() {
 
 function paymentInser(impuid,ordername,price){
 	$.ajax({
-			url:"/paymentInsert/"+impuid+"/"+ordername+"/"+price,
+			url:"/springsingle/paymentInsert",
 			type:"post",
-			
+			data:{
+				impuid : impuid,
+				ordername : ordername,
+				price : price
+			},
 			success:function(res){
 				 if(res==1){
 					alert("결제가 완료되었습니다.");
-					location.href="/paymentList";
+					location.href="/springsingle/paymentList";
 				}else if(res==2){
 					
 				}else{

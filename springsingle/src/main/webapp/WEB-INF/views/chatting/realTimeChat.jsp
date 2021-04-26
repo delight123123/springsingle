@@ -61,7 +61,7 @@ var ws;
 	
 
 	function wsOpen(){
-		ws = new WebSocket("ws://" + location.host + "/chatting");
+		ws = new WebSocket("ws://" + location.host + "/springsingle/chatting");
 		wsEvt();
 	}
 		

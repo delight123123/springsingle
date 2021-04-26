@@ -138,7 +138,7 @@
 			$(this).click(function() {
 				var imp=$(this).next().val();
 				//alert(imp);
-				window.open("/refundAsk?imp="+imp,"환불하기",
+				window.open("<c:url value='/refundAsk?imp="+imp+"'/>","환불하기",
 				"width=500,height=500,left=0,top=0,location=yes,resizable=yes");
 			});
 		});

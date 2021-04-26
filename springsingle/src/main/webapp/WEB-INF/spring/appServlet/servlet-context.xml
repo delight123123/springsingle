@@ -49,11 +49,6 @@
 			<exclude-mapping path="/edit"/>
 			<beans:ref bean="loginInterceptor"/>
 		</interceptor>
-		
-		<interceptor>
-			<mapping path="/edit"/>
-			<beans:ref bean="editDelInterceptor"/>
-		</interceptor>
 	
 	</interceptors>
 </beans:beans>
