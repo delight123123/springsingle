@@ -36,6 +36,7 @@ public class ReBoardDownloadView extends AbstractView{
 		response.setContentType("application/octet-stream");
 		
 		if(fName.contains(",")) {
+			fName=fName.replace(",", "_");
 			response.setHeader("Content-disposition", "attachment;filename=\""+fName+"\"");
 		}
 		
