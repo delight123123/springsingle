@@ -40,7 +40,7 @@ $(function() {
 						msg += '\n상점 거래ID : ' + data.response.merchant_uid;
 						msg += '\n결제 금액 : ' + data.response.paid_amount;
 						msg += '\n카드 승인번호 : ' + data.response.apply_num;
-						alert(msg);
+						//alert(msg);
 					})
 					
 				} else {

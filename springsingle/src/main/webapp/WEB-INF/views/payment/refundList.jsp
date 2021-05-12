@@ -74,7 +74,7 @@
 									<td>
 									<c:if test="${map['REFUND_STATE']=='N' }">
 										<input type="button" value="환불" class="refundGo">
-										<input type="text" value="${map['REFUND_NO'] }">
+										<input type="hidden" value="${map['REFUND_NO'] }">
 									</c:if>
 									<c:if test="${map['REFUND_STATE']=='Y' }">
 										환불완료
@@ -190,7 +190,7 @@ function refundGo(refundNo) {
 				refundNo : refundNo
 			},
 			success:function(res){
-				alert(res);
+				//alert(res);
 				if(res>0){
 					alert("환불 처리 완료");
 					location.reload();

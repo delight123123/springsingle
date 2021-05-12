@@ -24,7 +24,7 @@
 		</div>
 		<form id="upfileform" method="post" action="" enctype="multipart/form-data">
 		<fieldset>
-			<input type="text" id="insertno" name="insertno">
+			<input type="hidden" id="insertno" name="insertno">
 					<div id="divdiv2">
 						<label for="">첨부파일</label>
 						<input type="button" name="add" id="add" value="+"><input type="button" name="minus" id="minus" value="-">
