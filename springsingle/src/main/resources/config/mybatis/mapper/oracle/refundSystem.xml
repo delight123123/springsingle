@@ -14,7 +14,7 @@
 	
 	<sql id="searchWhere">
 		<if test="searchKeyword!=null and searchKeyword!=''">
-			where ${searchCondition} between  to_DATE(#{searchKeyword}) and  to_DATE(#{searchKeyword})+1
+			where ${searchCondition} between  to_DATE(#{searchKeyword},'YYYY-MM-DD') and  to_DATE(#{searchKeyword},'YYYY-MM-DD')+1
 		</if>
 	</sql>
 	

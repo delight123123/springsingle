@@ -4,7 +4,7 @@
 <form action="<c:url value='/refundList'/>" 
 	name="frmPage" method="post">
 	<input type="hidden" name="searchCondition" 
-		value="reporting_date" id="aa1">
+		value="r.reporting_date" id="aa1">
 	<input type="hidden" name="searchKeyword" 
 		value="${param.searchKeyword}" id="aa2">
 	<input type="hidden" name="currentPage" value="${pagingInfo.currentPage }"  id="aa3">
@@ -14,7 +14,7 @@
 <div class="content-wrapper">
 	<div class="card">
 		<div class="card-body">
-			<input type="text" id="date" class="form-control form-control-sm"  disabled="disabled" placeholder="옆 버튼을 클릭하여 검색할 날짜를 선택해주세요."/>
+			<input type="text" id="date" class="form-control form-control-sm"  disabled="disabled" placeholder="옆 버튼을 클릭하여 검색할 날짜를 선택해주세요." value="${param.searchKeyword}"/>
 			<input type="button" value="검색" class="form-control form-control-sm" id="refundSearch"/>
 		</div>
 		<div class="card-body">

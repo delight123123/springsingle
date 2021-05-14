@@ -111,7 +111,7 @@ $(function() {
 	
 	$("#exceldown").click(function() {
 		if(confirm("회원 목록을 다운로드 하시겠습니까?")){
-			location.href='/userListExcelDown';		
+			location.href="<c:url value='/userListExcelDown'/>";		
 		}
 	});
 	
