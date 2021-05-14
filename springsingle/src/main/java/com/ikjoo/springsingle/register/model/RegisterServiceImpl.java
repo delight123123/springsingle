@@ -75,7 +75,7 @@ public class RegisterServiceImpl implements RegisterService{
 			for(RegisterVO vo: listVo) {
 				String userid=vo.getUserid();
 				if(userid!=null && !userid.isEmpty()) {
-					cnt=registerDao.forcedExit(userid);
+					cnt=registerDao.cancle(userid);
 				}
 			}	
 		}catch(RuntimeException e) {
@@ -96,7 +96,7 @@ public class RegisterServiceImpl implements RegisterService{
 			for(RegisterVO vo:listVo) {
 				String userid=vo.getUserid();
 				if(userid!=null && !userid.isEmpty()) {
-					cnt=registerDao.cancle(userid);
+					cnt=registerDao.forcedExit(userid);
 				}
 			}
 			

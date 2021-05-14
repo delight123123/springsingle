@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ikjoo.springsingle.board.model.ReboardService;
@@ -36,7 +37,7 @@ public class ReboardController {
 	@Autowired
 	private FileUploadUtil fileuploadUtil;
 	
-	@RequestMapping(value = "/write", method = RequestMethod.GET )
+	@RequestMapping(value = "/write")
 	public Object write() {
 		
 		logger.info("글쓰기 화면 보이기");
@@ -46,29 +47,47 @@ public class ReboardController {
 
 	}
 	
-	@ResponseBody
+	//@ResponseBody
 	@RequestMapping("/boardWrite")
-	public int boardWrite(@ModelAttribute ReboardVO vo,HttpSession session) {
+	public Object boardWrite(@ModelAttribute ReboardVO vo,HttpSession session,MultipartHttpServletRequest request,
+			Model model) {
 		int res=0;
 		String userid=(String) session.getAttribute("userid");
 		vo.setUserid(userid);
 		res=reboardService.reboardWrite(vo);
-		
+		//session.setAttribute("insertno", res);
 		if(res!=0) {
 			logger.info("게시글 등록 성공");
-
+			
+			logger.info("파일업로드 시작");
+			List<UpfileListVO> list=fileuploadUtil.fileupload(request,session);
+			int result=vo.getReboardNo();
+			
+			if(list.size()>0) {
+				for(int i=0;i<list.size();i++) {
+					list.get(i).setReboardNo(result);
+				}
+				logger.info("파일 리스트 insert 시작");
+				res=reboardService.upfilelistInsert(list);
+			}
+			
+			String msg="", url="";
+			msg="게시글 등록 완료";
+			url="/main";
+			model.addAttribute("msg", msg);
+			model.addAttribute("url", url);
 		}
 		
 		
-		return res;
+		return "common/message";
 	}
 	
-	@ResponseBody
+	/*@ResponseBody
 	@RequestMapping("/fileuplod")
-	public int fileupload(HttpServletRequest request,HttpSession session) {
+	public int fileupload(MultipartHttpServletRequest request,HttpSession session) {
 		
 		logger.info("파일업로드 시작");
-		int result=Integer.parseInt(request.getParameter("insertno"));
+		int result=(Integer) session.getAttribute("insertno");
 		logger.info("result={}",result);
 		
 		//List<UpfileListVO> list=fileuploadUtil.fileupload(request, session);
@@ -85,7 +104,7 @@ public class ReboardController {
 		
 		return res;
 		
-	}
+	}*/
 	
 	@RequestMapping("/readCnt")
 	public Object readCnt(@RequestParam("reNo") int reNo) {
@@ -153,10 +172,10 @@ public class ReboardController {
 	
 	@ResponseBody
 	@RequestMapping("/fileuplodupdate")
-	public int fileupdate(HttpServletRequest request,HttpSession session) {
+	public int fileupdate(MultipartHttpServletRequest request,HttpSession session) {
 		
 		logger.info("파일업데이트 시작");
-		int result=Integer.parseInt(request.getParameter("insertno"));
+		int result=(Integer) session.getAttribute("insertno");
 		logger.info("result={}",result);
 
 		//새로운 파일 업로드
@@ -169,7 +188,7 @@ public class ReboardController {
 			logger.info("파일 리스트 insert 시작");
 			res=reboardService.upfilelistInsert(list);
 			List<UpfileListVO> delList=reboardService.fileByReboardNo(result);
-			boolean delRes=fileuploadUtil.fileDel(delList, session, request);
+			boolean delRes=fileuploadUtil.fileDel(delList, session);
 			logger.info("기존 파일 삭제 결과 delRes={}",delRes);
 		}
 		logger.info("파일 리스트 insert 결과 res={}",res);
@@ -208,7 +227,7 @@ public class ReboardController {
 		boolean delRes=false;
 		
 		//게시글 파일 삭제
-		delRes=fileuploadUtil.fileDel(list, session, request);
+		delRes=fileuploadUtil.fileDel(list, session);
 		
 		logger.info("게시글 파일 삭제 결과 delRes={}",delRes);
 		
@@ -233,7 +252,7 @@ public class ReboardController {
 		
 		logger.info("다운로드할 파일 정보 vo={}",vo);
 		
-		String path=fileuploadUtil.getFilePath(request, session);
+		String path=fileuploadUtil.getFilePath(session);
 		
 		File file=new File(path, filename);
 		

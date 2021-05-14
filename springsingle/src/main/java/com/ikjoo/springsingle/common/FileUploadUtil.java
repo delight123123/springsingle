@@ -48,7 +48,7 @@ public class FileUploadUtil {
 
 				// 업로드 처리
 				// 업로드할 경로 구하기
-				String upPath = getFilePath(request, session);
+				String upPath = getFilePath(session);
 
 				File file = new File(upPath, fileName);
 
@@ -71,7 +71,7 @@ public class FileUploadUtil {
 		return list;
 	}
 
-	public List<UpfileListVO> fileupload(HttpServletRequest request, HttpSession session) {
+	/*public List<UpfileListVO> fileupload(HttpServletRequest request, HttpSession session) {
 
 		logger.info("파일 업로드 시작");
 		
@@ -123,20 +123,73 @@ public class FileUploadUtil {
 		
 		return list;
 		
+	}*/
+	public List<UpfileListVO> fileupload(MultipartHttpServletRequest multiReq, HttpSession session) {
+		
+		logger.info("파일 업로드 시작");
+		
+		
+		// 파일 업로드 처리
+		
+		
+		Map<String, MultipartFile> fileMap = multiReq.getFileMap();
+		
+		List<UpfileListVO> list = new ArrayList<UpfileListVO>();
+		
+		Iterator<String> iter=fileMap.keySet().iterator();
+		
+		while(iter.hasNext()) {
+			String key=iter.next();
+			MultipartFile upfile=fileMap.get(key);
+			
+			//업로드된 경우
+			if(!upfile.isEmpty()) {
+				// 변경전 (원래) 파일명
+				String originFileName = upfile.getOriginalFilename();
+				// 변경된 파일명
+				String fileName = getUniqueFileName(originFileName);
+				// 파일 크기
+				long fileSize = upfile.getSize();
+				
+				// 업로드 처리
+				// 업로드할 경로 구하기
+				String upPath = getFilePath(session);				
+				
+				File file = new File(upPath, fileName);
+				
+				UpfileListVO vo = new UpfileListVO();
+				vo.setFileName(fileName);
+				vo.setFilesize(fileSize);
+				vo.setOriginalFileName(originFileName);
+				
+				try {
+					upfile.transferTo(file);
+					list.add(vo);
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}		
+				
+			}
+		}
+		
+		return list;
+		
 	}
 
 	
 	
 	
-	public String getFilePath(HttpServletRequest request, HttpSession session) {
+	public String getFilePath( HttpSession session) {
 		// 업로드할 경로 구하기
 		//String path = "";
 		String userid = (String) session.getAttribute("userid");
-
+		
 		//path = fileProper.getUploadDir();
 		//path = request.getSession().getServletContext().getRealPath(path) + "/" + userid;
 		String path = props.getProperty("file.upload.path") + "/" + userid;
-		path=request.getSession().getServletContext().getRealPath(path);
+		path=session.getServletContext().getRealPath(path);
 		File folder=new File(path);
 		if(!folder.exists()) {
 			folder.mkdirs();
@@ -166,10 +219,10 @@ public class FileUploadUtil {
 	}
 	
 	
-	public boolean fileDel(List<UpfileListVO> list, HttpSession session,HttpServletRequest request) {
+	public boolean fileDel(List<UpfileListVO> list, HttpSession session) {
 		boolean res=false;
 		
-		String path=getFilePath(request, session);
+		String path=getFilePath(session);
 		
 		for(UpfileListVO vo:list) {
 			String fileName=vo.getFileName();
