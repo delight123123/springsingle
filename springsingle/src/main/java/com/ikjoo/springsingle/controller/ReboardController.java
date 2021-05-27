@@ -154,23 +154,46 @@ public class ReboardController {
 		return "reboard/edit";
 	}
 	
-	@ResponseBody
 	@RequestMapping("/boardUpdate")
-	public int reboardEdit(@ModelAttribute ReboardVO reboardVo) {
+	public Object reboardEdit(@ModelAttribute ReboardVO reboardVo,
+			MultipartHttpServletRequest request,HttpSession session,
+			Model model) {
 		int res=0;
 		
 		logger.info("글 수정 파라미터 reboardVo={}",reboardVo);
 		
-		res=reboardEdit(reboardVo);
+		res=reboardService.reboardEdit(reboardVo);
 		logger.info("글 수정 결과 res={}",res);
 		if(res>0) {
-			res=reboardVo.getReboardNo();
+			int result=reboardVo.getReboardNo();
+			
+			logger.info("파일업데이트 시작");
+			logger.info("result={}",result);
+			
+			//새로운 파일 업로드
+			List<UpfileListVO> list=fileuploadUtil.fileupload(request,session);
+			if(list.size()>0) {
+				for(int i=0;i<list.size();i++) {
+					list.get(i).setReboardNo(result);
+				}
+				logger.info("파일 리스트 insert 시작");
+				res=reboardService.upfilelistInsert(list);
+				List<UpfileListVO> delList=reboardService.fileByReboardNo(result);
+				boolean delRes=fileuploadUtil.fileDel(delList, session);
+				logger.info("기존 파일 삭제 결과 delRes={}",delRes);
+			}
+			logger.info("파일 리스트 insert 결과 res={}",res);
+			String msg="", url="";
+			msg="게시글 수정 완료";
+			url="/detail?reboardNo="+reboardVo.getReboardNo();
+			model.addAttribute("msg", msg);
+			model.addAttribute("url", url);
 		}
 		
-		return res;
+		return "common/message";
 	}
 	
-	@ResponseBody
+	/*@ResponseBody
 	@RequestMapping("/fileuplodupdate")
 	public int fileupdate(MultipartHttpServletRequest request,HttpSession session) {
 		
@@ -195,7 +218,7 @@ public class ReboardController {
 		
 		return res;
 		
-	}
+	}*/
 	
 	@RequestMapping("/delete")
 	public Object reboardDel(@RequestParam("no") int reboardNo,HttpSession session

@@ -36,7 +36,12 @@
 		</div>
 
 		<div class="lastDiv">		
-			<p class="content">${vo.reboardContent }</p>
+		<%
+			pageContext.setAttribute("newLine", "\r\n");
+		%>
+			<c:set var="content" 
+				value="${fn:replace(vo.reboardContent, newLine,'<br>') }" />		
+			<p class="content">${content }</p>
 		</div>
 
 		<div class="text-center">
